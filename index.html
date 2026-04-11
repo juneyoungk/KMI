@@ -1,260 +1,697 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내시경 검사 배분 계산기 </title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f9;
-            color: #333;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-        h1 {
-            text-align: center;
-            color: #2c7a7b;
-            font-size: 2.2em;
-            margin-bottom: 30px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
-        .container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-        }
-        .input-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        label {
-            width: 220px;
-            font-weight: bold;
-            color: #4a5568;
-            font-size: 1.1em;
-        }
-        input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #cbd5e0;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s ease;
-        }
-        input:focus {
-            border-color: #319795;
-            outline: none;
-        }
-        button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #319795;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #2c7a7b;
-            transform: translateY(-2px);
-        }
-        h2 {
-            text-align: center;
-            color: #4a5568;
-            font-size: 1.5em;
-            margin-top: 40px;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        th, td {
-            border: 1px solid #e2e8f0;
-            padding: 12px;
-            text-align: center;
-            font-size: 0.95em;
-        }
-        th {
-            background-color: #e6fffa;
-            color: #2f855a;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f7fafc;
-        }
-        tr:hover {
-            background-color: #e6fffa;
-            transition: background-color 0.3s ease;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>내시경 배정 계산기</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --border: #d9e0ea;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --ok: #059669;
+      --warn: #d97706;
+      --danger: #dc2626;
+      --thead: #eef4ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 32px auto;
+      padding: 0 16px 48px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    .sub {
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.05);
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .constants {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .pill {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .pill .k {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .pill .v {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .summary .box {
+      background: #fbfdff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .summary .box .k {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .summary .box .v {
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .note {
+      margin-top: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .error {
+      color: var(--danger);
+      font-weight: 700;
+      margin-top: 12px;
+      white-space: pre-line;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: white;
+    }
+
+    thead th {
+      background: var(--thead);
+      padding: 12px 10px;
+      text-align: center;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody td, tfoot td {
+      padding: 10px;
+      border-top: 1px solid #edf2f7;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    tbody tr:hover {
+      background: #fafcff;
+    }
+
+    tfoot td {
+      font-weight: 800;
+      background: #f8fafc;
+    }
+
+    .left {
+      text-align: left !important;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .b-col2 { background: #fee2e2; color: #991b1b; }
+    .b-col1 { background: #dbeafe; color: #1d4ed8; }
+    .b-gast1 { background: #dcfce7; color: #166534; }
+    .b-gast2 { background: #fef3c7; color: #92400e; }
+
+    details {
+      margin-top: 10px;
+    }
+
+    details summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    @media (max-width: 900px) {
+      .grid, .summary, .constants {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .footer-note {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>내시경 검사 배분 계산기</h1>
-        <div class="input-group">
-            <label for="gastroCount">위내시경 갯수:</label>
-            <input type="number" id="gastroCount" value="250" min="0">
-        </div>
-        <div class="input-group">
-            <label for="coloCount">대장내시경 갯수:</label>
-            <input type="number" id="coloCount" value="160" min="0">
-        </div>
-        <div class="input-group">
-            <label for="gastroDoctors">위내시경 의사 수:</label>
-            <input type="number" id="gastroDoctors" value="7" min="1">
-        </div>
-        <div class="input-group">
-            <label for="coloDoctors1F">1층 대장내시경 의사 수:</label>
-            <input type="number" id="coloDoctors1F" value="9" min="1">
-        </div>
-        <div class="input-group">
-            <label for="coloDoctors2F">2층 대장내시경 의사 수:</label>
-            <input type="number" id="coloDoctors2F" value="3" min="1">
-        </div>
-        <button onclick="calculateDistribution()">계산하기</button>
-
-        <h2>결과</h2>
-        <table id="resultTable">
-            <thead>
-                <tr>
-                    <th>의사 그룹</th>
-                    <th>위내시경 갯수</th>
-                    <th>대장내시경 갯수</th>
-                    <th>총 시행 시간 (분)</th>
-                    <th>총 시행 점수</th>
-                </tr>
-            </thead>
-            <tbody id="resultBody"></tbody>
-        </table>
-<br> Last update 20260405 by JYKIM 
+  <div class="wrap">
+    <h1>내시경 배정 계산기</h1>
+    <div class="sub">
+      KMI SUWON , 2026-04-11
     </div>
 
-    <script>
-        // 고정 변수
-        const GASTRO_TIME = 7; // 위내시경 1개당 시간 (분)
-        const COLO_TIME = 21; // 대장내시경 1개당 시간 (분)
-        const GASTRO_SCORE = 1; // 위내시경 1개당 점수
-        const COLO_SCORE = 3; // 대장내시경 1개당 점수
+    <div class="card">
+      <h2>입력값</h2>
+      <div class="grid">
+        <div class="field">
+          <label for="gastCount">위내시경 갯수 </label>
+          <input type="number" id="gastCount" value="250" min="0" />
+        </div>
+        <div class="field">
+          <label for="colCount">대장내시경 갯수 </label>
+          <input type="number" id="colCount" value="160" min="0" />
+        </div>
+        <div class="field">
+          <label for="gastDr1">정상출근 위내시경의사 수 </label>
+          <input type="number" id="gastDr1" value="4" min="0" />
+        </div>
+        <div class="field">
+          <label for="gastDr2">늦은출근 위내시경의사 수 </label>
+          <input type="number" id="gastDr2" value="1" min="0" />
+        </div>
+        <div class="field">
+          <label for="colDr1">1층 대장내시경의사 수 </label>
+          <input type="number" id="colDr1" value="9" min="0" />
+        </div>
+        <div class="field">
+          <label for="colDr2">2층 대장내시경의사 수 </label>
+          <input type="number" id="colDr2" value="3" min="0" />
+        </div>
+      </div>
 
-        function calculateDistribution() {
-            // 입력값 가져오기
-            const gastroCount = parseInt(document.getElementById('gastroCount').value) || 0;
-            const coloCount = parseInt(document.getElementById('coloCount').value) || 0;
-            const gastroDoctors = parseInt(document.getElementById('gastroDoctors').value) || 1;
-            const coloDoctors1F = parseInt(document.getElementById('coloDoctors1F').value) || 1;
-            const coloDoctors2F = parseInt(document.getElementById('coloDoctors2F').value) || 1;
+      <div class="btn-row">
+        <button class="btn-primary" onclick="calculate()">계산하기</button>
+        <button class="btn-secondary" onclick="resetDefaults()">기본값 복원</button>
+      </div>
 
-            // 총 의사 수
-            const totalDoctors = gastroDoctors + coloDoctors1F + coloDoctors2F;
+     
+  
 
-            // 총 시행 시간 계산
-            const totalTime = (gastroCount * GASTRO_TIME) + (coloCount * COLO_TIME);
-            const targetTimePerDoctor = totalTime / totalDoctors;
+      <div id="error" class="error"></div>
+    </div>
 
-            // 결과 저장용 배열
-            const results = [];
+    <div class="card">
+      <h2>요약 결과</h2>
+      <div id="summary" class="summary"></div>
+      <div id="verification" class="footer-note"></div>
+    </div>
 
-            // 남은 검사 수 초기화
-            let remainingGastro = gastroCount;
-            let remainingColo = coloCount;
+    <div class="card">
+      <h2>의사별 상세 배정</h2>
+      <div id="resultTable"></div>
+    </div>
+  </div>
 
-            // 1. 2층 대장내시경 의사 배분: TargetTime에 가까운 대장내시경 배정 (대장내시경만)
-            let coloPerDoctor2F = Math.floor(targetTimePerDoctor / COLO_TIME);
-            let totalColoFor2F = coloPerDoctor2F * coloDoctors2F;
-            if (totalColoFor2F > remainingColo) {
-                coloPerDoctor2F = Math.floor(remainingColo / coloDoctors2F);
-                totalColoFor2F = coloPerDoctor2F * coloDoctors2F;
-            }
-            let extraColo2F = remainingColo - totalColoFor2F;
-            if (extraColo2F > coloDoctors2F) {
-                extraColo2F = coloDoctors2F;
-            }
-            remainingColo -= totalColoFor2F + extraColo2F;
+  <script>
+    const COL_TIME = 21;
+    const GAST_TIME = 7;
+    const COL_POINT = 3;
+    const GAST_POINT = 1;
+    const LATE_OFFSET = 60;
 
-            for (let i = 0; i < coloDoctors2F; i++) {
-                const colo = coloPerDoctor2F + (i < extraColo2F ? 1 : 0);
-                const time = colo * COLO_TIME;
-                results.push({
-                    group: `2층 대장내시경 의사 ${i + 1}`,
-                    gastro: 0,
-                    colo: colo,
-                    time: time,
-                    score: colo * COLO_SCORE
-                });
-            }
+    function resetDefaults() {
+      document.getElementById("gastCount").value = 250;
+      document.getElementById("colCount").value = 160;
+      document.getElementById("gastDr1").value = 4;
+      document.getElementById("gastDr2").value = 1;
+      document.getElementById("colDr1").value = 9;
+      document.getElementById("colDr2").value = 3;
+      calculate();
+    }
 
-            // 2. 1층 대장내시경 의사 배분: 남은 대장내시경 분배 후, TargetTime 부족분만큼 위내시경 배정
-            const coloPerDoctor1F = Math.floor(remainingColo / coloDoctors1F);
-            let extraColo1F = remainingColo % coloDoctors1F;
+    function num(id) {
+      return parseInt(document.getElementById(id).value, 10) || 0;
+    }
 
-            for (let i = 0; i < coloDoctors1F; i++) {
-                const colo = coloPerDoctor1F + (i < extraColo1F ? 1 : 0);
-                const coloTime = colo * COLO_TIME;
-                const remainingTime = Math.max(0, targetTimePerDoctor - coloTime);
-                let gastro = Math.floor(remainingTime / GASTRO_TIME);
-                // 남은 위내시경이 부족하면 최대한 배정, 음수 방지
-                gastro = Math.max(0, Math.min(gastro, remainingGastro));
-                const time = coloTime + (gastro * GASTRO_TIME);
-                results.push({
-                    group: `1층 대장내시경 의사 ${i + 1}`,
-                    gastro: gastro,
-                    colo: colo,
-                    time: time,
-                    score: (colo * COLO_SCORE) + (gastro * GASTRO_SCORE)
-                });
-                remainingGastro = Math.max(0, remainingGastro - gastro);
-            }
+    function evenSplit(total, count) {
+      if (count <= 0) return [];
+      const base = Math.floor(total / count);
+      const rem = total % count;
+      return Array.from({ length: count }, (_, i) => base + (i < rem ? 1 : 0));
+    }
 
-            // 3. 위내시경 의사 배분: 남은 위내시경을 비슷하게 분배
-            const gastroPerDoctor = Math.floor(remainingGastro / gastroDoctors);
-            let extraGastro = remainingGastro % gastroDoctors;
+    function formatNumber(v) {
+      return new Intl.NumberFormat("ko-KR").format(v);
+    }
 
-            for (let i = 0; i < gastroDoctors; i++) {
-                const gastro = Math.max(0, gastroPerDoctor + (i < extraGastro ? 1 : 0));
-                const time = gastro * GASTRO_TIME;
-                results.push({
-                    group: `위내시경 의사 ${i + 1}`,
-                    gastro: gastro,
-                    colo: 0,
-                    time: time,
-                    score: gastro * GASTRO_SCORE
-                });
-            }
+    function formatMinutes(v) {
+      return `${formatNumber(v)}분`;
+    }
 
-            // 결과 출력
-            const resultBody = document.getElementById('resultBody');
-            resultBody.innerHTML = '';
-            results.forEach(result => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${result.group}</td>
-                    <td>${result.gastro}</td>
-                    <td>${result.colo}</td>
-                    <td>${result.time.toFixed(2)}</td>
-                    <td>${result.score.toFixed(2)}</td>
-                `;
-                resultBody.appendChild(row);
-            });
+    function badgeClass(type) {
+      switch (type) {
+        case "2층 대장": return "b-col2";
+        case "1층 대장": return "b-col1";
+        case "위 정상출근": return "b-gast1";
+        case "위 늦은출근": return "b-gast2";
+        default: return "";
+      }
+    }
+
+    function buildCandidate(params, col2Total, aveTime) {
+      const {
+        gastCount, colCount, gastDr1, gastDr2, colDr1, colDr2
+      } = params;
+
+      if (col2Total < 0 || col2Total > colCount) return null;
+      if (colDr2 === 0 && col2Total !== 0) return null;
+      if (colDr1 === 0 && col2Total !== colCount) return null;
+
+      const col2Arr = evenSplit(col2Total, colDr2);
+      const col1Arr = evenSplit(colCount - col2Total, colDr1);
+
+      if (colDr1 > 0 && colDr2 > 0) {
+        const maxCol1 = Math.max(...col1Arr);
+        const minCol2 = Math.min(...col2Arr);
+        if (!(minCol2 > maxCol1)) return null;
+      }
+
+      const doctors = [];
+
+      // 2층 대장내시경 의사
+      for (let i = 0; i < colDr2; i++) {
+        doctors.push({
+          name: `2층 대장 ${i + 1}`,
+          type: "2층 대장",
+          canGast: false,
+          late: false,
+          gast: 0,
+          col: col2Arr[i]
+        });
+      }
+
+      // 1층 대장내시경 의사
+      for (let i = 0; i < colDr1; i++) {
+        doctors.push({
+          name: `1층 대장 ${i + 1}`,
+          type: "1층 대장",
+          canGast: true,
+          late: false,
+          gast: 0,
+          col: col1Arr[i]
+        });
+      }
+
+      // 정상출근 위내시경 의사
+      for (let i = 0; i < gastDr1; i++) {
+        doctors.push({
+          name: `위 정상 ${i + 1}`,
+          type: "위 정상출근",
+          canGast: true,
+          late: false,
+          gast: 0,
+          col: 0
+        });
+      }
+
+      // 늦은출근 위내시경 의사
+      for (let i = 0; i < gastDr2; i++) {
+        doctors.push({
+          name: `위 늦출근 ${i + 1}`,
+          type: "위 늦은출근",
+          canGast: true,
+          late: true,
+          gast: 0,
+          col: 0
+        });
+      }
+
+      const gastCapable = doctors.filter(d => d.canGast);
+      if (gastCount > 0 && gastCapable.length === 0) return null;
+
+      // 위내시경은 "보정시간(실제시간 + 늦출근 60분)"이 가장 작은 의사에게 1건씩 배정
+      for (let g = 0; g < gastCount; g++) {
+        let bestIdx = -1;
+        let bestValue = Infinity;
+
+        for (let i = 0; i < doctors.length; i++) {
+          if (!doctors[i].canGast) continue;
+          const actualTime = doctors[i].gast * GAST_TIME + doctors[i].col * COL_TIME;
+          const adjustedTime = actualTime + (doctors[i].late ? LATE_OFFSET : 0);
+
+          // tie-break:
+          // 1) adjustedTime 낮은 의사 우선
+          // 2) actualTime 낮은 의사 우선
+          // 3) 늦은출근은 동점일 때 뒤로
+          const rank = adjustedTime * 100000 + actualTime * 100 + (doctors[i].late ? 1 : 0);
+          if (rank < bestValue) {
+            bestValue = rank;
+            bestIdx = i;
+          }
         }
-    </script>
- </body>
+
+        doctors[bestIdx].gast += 1;
+      }
+
+      const evaluated = evaluateCandidate(doctors, aveTime);
+      return { doctors, ...evaluated };
+    }
+
+    function evaluateCandidate(doctors, aveTime) {
+      const actualTimes = doctors.map(d => d.gast * GAST_TIME + d.col * COL_TIME);
+      const adjustedTimes = doctors.map(d => (d.gast * GAST_TIME + d.col * COL_TIME) + (d.late ? LATE_OFFSET : 0));
+      const points = doctors.map(d => d.gast * GAST_POINT + d.col * COL_POINT);
+
+      const maxAdj = Math.max(...adjustedTimes);
+      const minAdj = Math.min(...adjustedTimes);
+      const rangeAdj = maxAdj - minAdj;
+      const meanAdj = adjustedTimes.reduce((a, b) => a + b, 0) / adjustedTimes.length;
+      const variance = adjustedTimes.reduce((sum, t) => sum + Math.pow(t - meanAdj, 2), 0) / adjustedTimes.length;
+      const stdAdj = Math.sqrt(variance);
+
+      // 2층 대장 의사는 Ave_time에 가깝되 초과하는 쪽을 선호
+      let col2Penalty = 0;
+      const col2Docs = doctors.filter(d => d.type === "2층 대장");
+      for (const d of col2Docs) {
+        const t = d.col * COL_TIME;
+        if (t < aveTime) {
+          col2Penalty += (aveTime - t) * 50; // 평균보다 아래이면 큰 패널티
+        } else {
+          col2Penalty += (t - aveTime) * 2;  // 평균보다 높아도 너무 멀면 약한 패널티
+        }
+      }
+
+      // 1층 대장 의사보다 2층 대장 의사의 대장 건수가 더 많아야 함
+      let rulePenalty = 0;
+      const col1Docs = doctors.filter(d => d.type === "1층 대장");
+      if (col1Docs.length > 0 && col2Docs.length > 0) {
+        const maxCol1 = Math.max(...col1Docs.map(d => d.col));
+        const minCol2 = Math.min(...col2Docs.map(d => d.col));
+        if (minCol2 <= maxCol1) {
+          rulePenalty += 1000000;
+        }
+      }
+
+      const score = stdAdj * 1000 + rangeAdj * 100 + col2Penalty + rulePenalty;
+
+      return {
+        actualTimes,
+        adjustedTimes,
+        points,
+        maxAdj,
+        minAdj,
+        rangeAdj,
+        meanAdj,
+        stdAdj,
+        score
+      };
+    }
+
+    function calculate() {
+      const errorEl = document.getElementById("error");
+      const summaryEl = document.getElementById("summary");
+      const resultTableEl = document.getElementById("resultTable");
+      const verificationEl = document.getElementById("verification");
+
+      errorEl.textContent = "";
+      summaryEl.innerHTML = "";
+      resultTableEl.innerHTML = "";
+      verificationEl.innerHTML = "";
+
+      const params = {
+        gastCount: num("gastCount"),
+        colCount: num("colCount"),
+        gastDr1: num("gastDr1"),
+        gastDr2: num("gastDr2"),
+        colDr1: num("colDr1"),
+        colDr2: num("colDr2")
+      };
+
+      const totalDoctors = params.gastDr1 + params.gastDr2 + params.colDr1 + params.colDr2;
+
+      const errors = [];
+      if (totalDoctors <= 0) errors.push("전체 의사 수는 1명 이상이어야 합니다.");
+      if (params.gastCount > 0 && (params.gastDr1 + params.gastDr2 + params.colDr1) <= 0) {
+        errors.push("위내시경을 시행할 수 있는 의사가 없습니다. (정상 위 + 늦은 위 + 1층 대장 의사)");
+      }
+      if (params.colCount > 0 && (params.colDr1 + params.colDr2) <= 0) {
+        errors.push("대장내시경을 시행할 수 있는 의사가 없습니다. (1층 대장 + 2층 대장 의사)");
+      }
+
+      if (errors.length > 0) {
+        errorEl.textContent = errors.join("\n");
+        return;
+      }
+
+      const aveTime = ((params.gastCount * GAST_TIME) + (params.colCount * COL_TIME)) / totalDoctors;
+
+      let best = null;
+      const minCol2Total = (params.colDr2 === 0) ? 0 : 0;
+      const maxCol2Total = (params.colDr2 === 0) ? 0 : params.colCount;
+
+      for (let col2Total = minCol2Total; col2Total <= maxCol2Total; col2Total++) {
+        const candidate = buildCandidate(params, col2Total, aveTime);
+        if (!candidate) continue;
+
+        if (!best || candidate.score < best.score) {
+          best = candidate;
+        }
+      }
+
+      if (!best) {
+        errorEl.textContent = "현재 입력값으로는 조건을 만족하는 배정안을 찾지 못했습니다.";
+        return;
+      }
+
+      renderSummary(best, params, aveTime);
+      renderTable(best);
+      renderVerification(best, params, aveTime);
+    }
+
+    function renderSummary(best, params, aveTime) {
+      const totalTime = best.doctors.reduce((sum, d) => sum + d.gast * GAST_TIME + d.col * COL_TIME, 0);
+      const totalPoints = best.doctors.reduce((sum, d) => sum + d.gast * GAST_POINT + d.col * COL_POINT, 0);
+
+      document.getElementById("summary").innerHTML = `
+        <div class="box">
+          <div class="k">Ave_time</div>
+          <div class="v">${aveTime.toFixed(2)}분</div>
+        </div>
+        <div class="box">
+          <div class="k">총 시행시간</div>
+          <div class="v">${formatNumber(totalTime)}분</div>
+        </div>
+        <div class="box">
+          <div class="k">보정시간 최대-최소 차이</div>
+          <div class="v">${formatNumber(best.rangeAdj)}분</div>
+        </div>
+        <div class="box">
+          <div class="k">총 시행점수</div>
+          <div class="v">${formatNumber(totalPoints)}점</div>
+        </div>
+      `;
+    }
+
+    function renderTable(best) {
+      const sorted = [...best.doctors].sort((a, b) => {
+        const order = {
+          "2층 대장": 1,
+          "1층 대장": 2,
+          "위 정상출근": 3,
+          "위 늦은출근": 4
+        };
+        return order[a.type] - order[b.type] || a.name.localeCompare(b.name, "ko");
+      });
+
+      let rows = "";
+      let totalGast = 0;
+      let totalCol = 0;
+      let totalPoint = 0;
+      let totalTime = 0;
+
+      sorted.forEach((d, idx) => {
+        const point = d.gast * GAST_POINT + d.col * COL_POINT;
+        const actualTime = d.gast * GAST_TIME + d.col * COL_TIME;
+        const adjustedTime = actualTime + (d.late ? LATE_OFFSET : 0);
+
+        totalGast += d.gast;
+        totalCol += d.col;
+        totalPoint += point;
+        totalTime += actualTime;
+
+        rows += `
+          <tr>
+            <td>${idx + 1}</td>
+            <td class="left">${d.name}</td>
+            <td><span class="badge ${badgeClass(d.type)}">${d.type}</span></td>
+            <td>${formatNumber(d.gast)}</td>
+            <td>${formatNumber(d.col)}</td>
+            <td>${formatNumber(point)}</td>
+            <td>${formatNumber(actualTime)}분</td>
+            <td>${formatNumber(adjustedTime)}분</td>
+          </tr>
+        `;
+      });
+
+      document.getElementById("resultTable").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>의사명</th>
+              <th>구분</th>
+              <th>위내시경</th>
+              <th>대장내시경</th>
+              <th>시행점수</th>
+              <th>시행시간</th>
+              <th>보정시간</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3">합계</td>
+              <td>${formatNumber(totalGast)}</td>
+              <td>${formatNumber(totalCol)}</td>
+              <td>${formatNumber(totalPoint)}</td>
+              <td>${formatNumber(totalTime)}분</td>
+              <td>-</td>
+            </tr>
+          </tfoot>
+        </table>
+      `;
+    }
+
+    function renderVerification(best, params, aveTime) {
+      const totalGast = best.doctors.reduce((sum, d) => sum + d.gast, 0);
+      const totalCol = best.doctors.reduce((sum, d) => sum + d.col, 0);
+      const totalTime = best.doctors.reduce((sum, d) => sum + d.gast * GAST_TIME + d.col * COL_TIME, 0);
+
+      const col2Docs = best.doctors.filter(d => d.type === "2층 대장");
+      const col1Docs = best.doctors.filter(d => d.type === "1층 대장");
+
+      let ruleText = "해당 없음";
+      if (col2Docs.length > 0 && col1Docs.length > 0) {
+        const minCol2 = Math.min(...col2Docs.map(d => d.col));
+        const maxCol1 = Math.max(...col1Docs.map(d => d.col));
+        ruleText = `2층 최소 대장건수 ${minCol2}건 / 1층 최대 대장건수 ${maxCol1}건 → ${minCol2 > maxCol1 ? "충족" : "미충족"}`;
+      }
+
+      document.getElementById("verification").innerHTML = `
+        입력 검증:
+        위내시경 ${formatNumber(totalGast)}건 / 대장내시경 ${formatNumber(totalCol)}건 배정 완료,
+        총 시행시간 ${formatNumber(totalTime)}분,
+        Ave_time ${aveTime.toFixed(2)}분,
+        조건검사: ${ruleText}.<br/>
+        보정시간 = 시행시간 + 늦은출근 보정 60분(늦은출근 의사만 적용)
+      `;
+    }
+
+    // 초기 자동 계산
+    calculate();
+  </script>
+</body>
 </html>
-
-
-
-
-
