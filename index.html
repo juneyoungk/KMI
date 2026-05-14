@@ -258,7 +258,7 @@
   <div class="wrap">
     <h1>내시경 배정 계산기</h1>
     <div class="sub">
-      KMI SUWON , 2026-04-16
+      KMI SUWON , 2026-05-14 (1~2층 구분 못 할 시 임시사용)
     </div>
 
     <div class="card">
@@ -281,11 +281,11 @@
           <input type="number" id="gastDr2" value="2" min="0" />
         </div>
         <div class="field">
-          <label for="colDr1">1층 대장내시경의사 수 </label>
+          <label for="colDr1"> 대장내시경의사 수 </label>
           <input type="number" id="colDr1" value="10" min="0" />
         </div>
         <div class="field">
-          <label for="colDr2">2층 대장내시경의사 수 </label>
+          <label for="colDr2">- </label>
           <input type="number" id="colDr2" value="0" min="0" />
         </div>
       </div>
@@ -323,10 +323,10 @@
     function resetDefaults() {
       document.getElementById("gastCount").value = 250;
       document.getElementById("colCount").value = 160;
-      document.getElementById("gastDr1").value = 4;
-      document.getElementById("gastDr2").value = 1;
-      document.getElementById("colDr1").value = 9;
-      document.getElementById("colDr2").value = 3;
+      document.getElementById("gastDr1").value = 7;
+      document.getElementById("gastDr2").value = 2;
+      document.getElementById("colDr1").value = 10;
+      document.getElementById("colDr2").value = 0;
       calculate();
     }
 
@@ -394,7 +394,7 @@
       // 1층 대장내시경 의사
       for (let i = 0; i < colDr1; i++) {
         doctors.push({
-          name: `1층 대장 ${i + 1}`,
+          name: ` 대장 ${i + 1}`,
           type: "1층 대장",
           canGast: true,
           late: false,
@@ -596,10 +596,10 @@
     function renderTable(best) {
       const sorted = [...best.doctors].sort((a, b) => {
         const order = {
-          "2층 대장": 1,
-          "1층 대장": 2,
-          "위 정상출근": 3,
-          "위 늦은출근": 4
+          "2층 대장": 4,
+          "1층 대장": 3,
+          "위 정상출근": 1,
+          "위 늦은출근": 2
         };
         return order[a.type] - order[b.type] || a.name.localeCompare(b.name, "ko");
       });
